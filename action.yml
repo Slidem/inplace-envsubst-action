@@ -1,0 +1,21 @@
+name: "Inplace environment substitution of files"
+description: "Replaces files containing environment variables placeholders '${PLACEHOLDER}' with the environment variables found in the current running job. This action does an in place environment variable substitution"
+inputs:
+  working-directory:
+      description: "Current working directory where the recursive search takes place"
+      required: false
+      default: "/"
+  fail_on_missing_variables:
+      description: "If the step should exit with a status code 1 if an environment variable defined as a placeholder is not found in the current running environment"
+      required: false
+      default: "false"
+  replace_in_paralel:
+      description: "Replaces the files in parallel. Useful for large files"
+      required: false
+      default: "false"
+  search_input:
+      description: "Json object input for searching files to be replaced. Contains the following keys: patterns (array strings of regex to match files), files (array of strings to match file names), depth: the search depth to search recursively"
+      required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

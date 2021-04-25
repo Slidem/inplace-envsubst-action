@@ -1,0 +1,36 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      COOL: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          COOL: "cool value"
+        with:
+          working-directory: testdir/replaced
+          fail-on-missing-variables: "true"
+          search_input: |
+            "
+              {
+                patterns: [".+.yaml"]
+                depth: 2
+              }
+            "
+      - name: Print file output
+        working-directory: testdir
+        run: |
+          echo $(cat not-replaced.txt)
+          echo $(cat replaced/test.txt)
+          echo $(cat replaced/test1.txt)
+          echo $(cat replaced/replaced2/test2.txt)
+          echo $(cat replaced/replaced2/test.yaml)
