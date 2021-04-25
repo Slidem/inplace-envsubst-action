@@ -15,7 +15,7 @@ const defaultDepth = 15
 type SearchInput struct {
 	Patterns []string `json:"patterns"`
 	Files    []string `json:"files"`
-	Depth    int      `json:"depths"`
+	Depth    int      `json:"depth"`
 }
 
 func main() {
