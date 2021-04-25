@@ -7,8 +7,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      COOL: test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -20,15 +18,37 @@ jobs:
           working-directory: testdir/replaced
           fail-on-missing-variables: "true"
           search_input: |
-              {
-                "patterns": [".+.yaml"],
-                "depth": 2
-              }
+            {
+              "patterns": [".+.yaml"],
+              "files": ["replace.me"],
+              "depth": 2
+            }
       - name: Print file output
         working-directory: testdir
         run: |
-          echo $(cat not-replaced.txt)
-          echo $(cat replaced/test.txt)
-          echo $(cat replaced/test1.txt)
-          echo $(cat replaced/replaced2/test2.txt)
-          echo $(cat replaced/replaced2/test.yaml)
+
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          # ignore values
+          test_content "not-replaced.txt" "test \${COOL}"
+          test_content "replaced/test.txt" "test \${COOL}"
+          test_content "replaced/test1.txt" "test \${COOL}"
+          test_content "replaced/replaced2/test2.txt" "test \${COOL}"
+
+          # ignored because of fetch depth
+          test_content "replaced/replaced2/notreplaced/replaced.yaml" "test: \${COOL}"
+
+          # replaced because of pattern regex
+          test_content "replaced/replaced2/test.yaml" "test: cool value"
+
+          # replaced because of file name match
+          test_content "replaced/replaced2/replace.me" "test cool value"
