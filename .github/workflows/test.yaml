@@ -20,12 +20,10 @@ jobs:
           working-directory: testdir/replaced
           fail-on-missing-variables: "true"
           search_input: |
-            "
               {
                 "patterns": [".+.yaml"],
                 "depth": 2
               }
-            "
       - name: Print file output
         working-directory: testdir
         run: |
