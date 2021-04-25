@@ -1,5 +1,6 @@
-name: Test
+name: Test action
 on:
+  pull_request:
   push:
     branches:
       - master
@@ -23,7 +24,7 @@ jobs:
               "files": ["replace.me"],
               "depth": 2
             }
-      - name: Print file output
+      - name: Test replaced files matches expected content
         working-directory: testdir
         run: |
 
