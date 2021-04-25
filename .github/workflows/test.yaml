@@ -22,8 +22,8 @@ jobs:
           search_input: |
             "
               {
-                patterns: [".+.yaml"]
-                depth: 2
+                "patterns": [".+.yaml"],
+                "depth": 2
               }
             "
       - name: Print file output
