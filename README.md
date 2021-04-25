@@ -30,6 +30,22 @@ Some notes:
 
 Example on how to use this action provided in this workflow: https://github.com/Slidem/inplace-envsubst-action/blob/master/.github/workflows/test.yaml
 
+```
+      - name: Test action
+        uses: Slidem/inplace-envsubst-action@v1.0.0
+        env:
+          COOL: "cool value"
+        with:
+          working-directory: testdir/replaced
+          fail-on-missing-variables: "true"
+          search_input: |
+            {
+              "patterns": [".+.yaml"],
+              "files": ["replace.me"],
+              "depth": 2
+            }
+```
+
 ## The Search Input
 
 The `search_input` JSON has 3 fields:
