@@ -2,3 +2,5 @@ github.com/Slidem/ftreedepth v0.0.1 h1:eytti9zJY7MxTPu9smDxajGEXigUYJSnhDpz3xPrM
 github.com/Slidem/ftreedepth v0.0.1/go.mod h1:oOjkVVkZD7G+R+AU6hP+6sPNwD4suvT7CwKzgVhsLss=
 github.com/Slidem/inplaceenvsubst v0.0.1 h1:wa7qVGeCJc4CoO/ApcRmWZuoJVOMmXGUHj8SyeIYzT8=
 github.com/Slidem/inplaceenvsubst v0.0.1/go.mod h1:gHE5QknBzY+Z0hS+2/olMFJriVpMrhVqpIcZeeoLvOE=
+github.com/Slidem/inplaceenvsubst v1.0.0 h1:AfVPtOSUS3F4aRcij1IBDPZkAZZFcxbJXo5jsGIK5U4=
+github.com/Slidem/inplaceenvsubst v1.0.0/go.mod h1:gHE5QknBzY+Z0hS+2/olMFJriVpMrhVqpIcZeeoLvOE=
