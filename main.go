@@ -18,6 +18,11 @@ type SearchInput struct {
 	Depth    int      `json:"depth"`
 }
 
+func (si *SearchInput) FindAll() bool {
+
+	return len(si.Patterns) == 0 && len(si.Files) == 0
+}
+
 func main() {
 
 	cfg := &inplaceenvsubst.Config{
@@ -38,6 +43,10 @@ func getFilesToReplace() []string {
 func walkTreeFunc(si SearchInput, toReplace *[]string) ftreedepth.CallbackFunc {
 	return 	func(path string, info os.FileInfo, err error) {
 		fn := filepath.Base(path)
+		if si.FindAll() {
+			*toReplace = append(*toReplace, path)
+			return
+		}
 		for _, r := range si.Patterns {
 			if matched, _ := regexp.MatchString(r, fn); matched {
 				*toReplace = append(*toReplace, path)
