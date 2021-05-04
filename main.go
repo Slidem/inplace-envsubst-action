@@ -83,6 +83,10 @@ func getWorkingDirectory() string {
 func getSearchInput() SearchInput {
 	i := SearchInput{}
 	inputJson := os.Getenv("INPUT_SEARCH_INPUT")
+	if inputJson == "" {
+	    inputJson = "{}"
+	}
+
 	err := json.Unmarshal([]byte(inputJson), &i)
 	if err != nil {
 		log.Fatalf("Could not convert search input to json value. Input: %s\n", inputJson)

@@ -1,4 +1,4 @@
-name: Test action
+name: Test action without search input
 on:
   pull_request:
   push:
@@ -16,14 +16,8 @@ jobs:
         env:
           COOL: "test value"
         with:
-          working-directory: testdir/replaced
+          working-directory: testdir
           fail_on_missing_variables: "true"
-          search_input: |
-            {
-              "patterns": [".+.yaml"],
-              "files": ["replace.me"],
-              "depth": 2
-            }
       - name: Test replaced files matches expected content
         working-directory: testdir
         run: |
@@ -39,17 +33,10 @@ jobs:
               fi
           }
 
-          # ignore values
-          test_content "not-replaced.txt" "test \${COOL}"
-          test_content "replaced/test.txt" "test \${COOL}"
-          test_content "replaced/test1.txt" "test \${COOL}"
-          test_content "replaced/replaced2/test2.txt" "test \${COOL}"
-
-          # ignored because of fetch depth
-          test_content "replaced/replaced2/notreplaced/replaced.yaml" "test: \${COOL}"
-
-          # replaced because of pattern regex
+          test_content "not-replaced.txt" "test test value"
+          test_content "replaced/test.txt" "test test value"
+          test_content "replaced/test1.txt" "test test value"
+          test_content "replaced/replaced2/test2.txt" "test test value"
+          test_content "replaced/replaced2/notreplaced/replaced.yaml" "test: test value"
           test_content "replaced/replaced2/test.yaml" "test: test value"
-
-          # replaced because of file name match
           test_content "replaced/replaced2/replace.me" "test test value"
