@@ -15,7 +15,7 @@ inputs:
     default: "false"
   search_input:
     description: "Json object input for searching files to be replaced. Contains the following keys: patterns (array strings of regex to match files), files (array of strings to match file names), depth: the search depth to search recursively"
-    required: true
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
