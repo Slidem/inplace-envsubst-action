@@ -24,11 +24,14 @@ Some notes:
 | working-directory           |         | The root directory where the file search and environment substitution takes place |
 | fail_on_missing_variables   |  false  | If set to "true" the job fails if a placeholder could not be resolved to an env variable. If set to false, action will ignore the non resolvable placeholder |
 | replace_in_parallel         |  false  | If set to true, for each file matching the regex, the env substitution will be executed in parallel, spawning a go routine for each |
+| whitelist                   |         | Json Array string defining the whitelisted env variables. Only whitelisted variables will be substituted if this input is specified. Example `["env1", "env2"]` `
+| blacklist                   |         | Json Array string defining the blacklisted env variables. Blacklisted env variables will not be substituted. Example `["env1", "env2"]` `
 | search_input                |         | Json string defining the search input for the files wished to be substituted. Example `{"patterns": [".+.yaml"],"files": ["replace.me"],"depth": 2}`
 
 ## How to use:
 
-Example on how to use this action provided in this workflow: https://github.com/Slidem/inplace-envsubst-action/blob/master/.github/workflows/test.yaml
+Example on how to use this action provided in this
+workflow: https://github.com/Slidem/inplace-envsubst-action/blob/master/.github/workflows/test.yaml
 
 ```
       - name: Test action
@@ -49,6 +52,8 @@ Example on how to use this action provided in this workflow: https://github.com/
 ## The Search Input
 
 The `search_input` JSON has 3 fields:
-- patterns: Array of regex patterns to match the files to be substituted. If any of the regex matches the files, the files will be substituted.
+
+- patterns: Array of regex patterns to match the files to be substituted. If any of the regex matches the files, the
+  files will be substituted.
 - files: Array of strings, for exact match of files to be replaced
 - depth: (!mandatory) Defines how many levels deep the recursive search will go, starting from your `working-directory`

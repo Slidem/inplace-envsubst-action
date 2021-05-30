@@ -1,0 +1,180 @@
+name: Test action
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          COOL: "test value"
+          blacklisted: "blacklisted"
+          whitelisted: "whitelisted"
+        with:
+          working-directory: testdir/replaced
+          fail_on_missing_variables: "true"
+          search_input: |
+            {
+              "patterns": [".+.yaml"],
+              "files": ["replace.me"],
+              "depth": 2
+            }
+      - name: Test replaced files matches expected content
+        working-directory: testdir
+        run: |
+
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          # ignore values
+          test_content "not-replaced.txt" "test \${COOL}"
+          test_content "replaced/test.txt" "test \${COOL}"
+          test_content "replaced/test1.txt" "test \${COOL}"
+          test_content "replaced/replaced2/test2.txt" "test \${COOL}"
+
+          # ignored because of fetch depth
+          test_content "replaced/replaced2/notreplaced/replaced.yaml" "test: \${COOL}"
+
+          # replaced because of pattern regex
+          test_content "replaced/replaced2/test.yaml" "test: test value"
+
+          # replaced because of file name match
+          test_content "replaced/replaced2/replace.me" "test test value"
+
+  test-no-search-input:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          COOL: "test value"
+        with:
+          working-directory: testdir
+      - name: Test replaced files matches expected content
+        working-directory: testdir
+        run: |
+
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          test_content "not-replaced.txt" "test test value"
+          test_content "replaced/test.txt" "test test value"
+          test_content "replaced/test1.txt" "test test value"
+          test_content "replaced/replaced2/test2.txt" "test test value"
+          test_content "replaced/replaced2/notreplaced/replaced.yaml" "test: test value"
+          test_content "replaced/replaced2/test.yaml" "test: test value"
+          test_content "replaced/replaced2/replace.me" "test test value"
+
+  test-whitelist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          COOL: "test value"
+          whitelisted: "whitelisted"
+        with:
+          working-directory: testdir
+          whitelist: |
+            [ "whitelisted" ]
+      - name: Test replaced files matches expected content
+        working-directory: testdir
+        run: |
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          test_content "replaced/whitelisted.txt" "whitelisted \${COOL}"
+
+  test-blacklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          COOL: "test value"
+          blacklisted: "blacklisted"
+        with:
+          working-directory: testdir
+          blacklist: |
+            [ "blacklisted" ]
+      - name: Test replaced files matches expected content
+        working-directory: testdir
+        run: |
+
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          test_content "replaced/blacklisted.txt" "\${blacklisted} test value"
+
+  test-defaults:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./
+        env:
+          notMissing: "notMissing"
+        with:
+          working-directory: testdir
+      - name: Test replaced files matches expected content
+        working-directory: testdir
+        run: |
+
+          #test function
+          function test_content {
+              path=$1
+              expected=$2
+              actual=$(cat $path)
+              if [[ "$actual" != "$expected" ]]; then
+                  echo "Content does not match ! Expected '$expected' but got '$actual'"
+                  exit 1
+              fi
+          }
+
+          test_content "replaced/defaults.txt" "defaultValue notMissing"

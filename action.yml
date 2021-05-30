@@ -13,6 +13,12 @@ inputs:
     description: "Replaces the files in parallel. Useful for large files"
     required: false
     default: "false"
+  whitelist:
+    description: "Json array representing the env variables to be whitelisted. Only the whitelisted variables will be replaced, the rest will be ignored"
+    required: false
+  blacklist:
+    description: "Json array representing the env variables to be blacklisted. Blacklisted variables will be ignored"
+    required: false
   search_input:
     description: "Json object input for searching files to be replaced. Contains the following keys: patterns (array strings of regex to match files), files (array of strings to match file names), depth: the search depth to search recursively"
     required: false
