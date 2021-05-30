@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/Slidem/ftreedepth"
-	"github.com/Slidem/inplaceenvsubst"
+	"github.com/Slidem/inplaceenvsubst/v2"
 	"log"
 	"os"
 	"path/filepath"
@@ -29,6 +29,8 @@ func main() {
 		FailOnMissingVariables: failOnMissingVariables(),
 		RunInParallel:          replaceInParallel(),
 		ErrorListener:          getErrorListener(),
+		WhitelistEnvs:          getWhitelistEnvs(),
+		BlacklistEnvs:          getBlacklistEnvs(),
 	}
 	inplaceenvsubst.ProcessFiles(getFilesToReplace(), cfg)
 }
@@ -41,7 +43,7 @@ func getFilesToReplace() []string {
 }
 
 func walkTreeFunc(si SearchInput, toReplace *[]string) ftreedepth.CallbackFunc {
-	return 	func(path string, info os.FileInfo, err error) {
+	return func(path string, info os.FileInfo, err error) {
 		fn := filepath.Base(path)
 		if si.FindAll() {
 			*toReplace = append(*toReplace, path)
@@ -84,7 +86,7 @@ func getSearchInput() SearchInput {
 	i := SearchInput{}
 	inputJson := os.Getenv("INPUT_SEARCH_INPUT")
 	if inputJson == "" {
-	    inputJson = "{}"
+		inputJson = "{}"
 	}
 
 	err := json.Unmarshal([]byte(inputJson), &i)
@@ -95,6 +97,34 @@ func getSearchInput() SearchInput {
 		i.Depth = defaultDepth
 	}
 	return i
+}
+
+func getBlacklistEnvs() inplaceenvsubst.StringSet {
+
+	return inplaceenvsubst.NewStringSet(getJsonArray("INPUT_BLACKLIST")...)
+}
+
+func getWhitelistEnvs() inplaceenvsubst.StringSet {
+
+	return inplaceenvsubst.NewStringSet(getJsonArray("INPUT_WHITELIST")...)
+}
+
+func getJsonArray(input string) []string {
+
+	var values []string
+
+	j := os.Getenv(input)
+	if j == "" {
+		return nil
+	}
+
+	err := json.Unmarshal([]byte(j), &values)
+	if err != nil {
+		log.Fatalf("Could not convert whitelist to valid json. Input: %s\n", j)
+	}
+
+	return values
+
 }
 
 func failOnMissingVariables() bool {
