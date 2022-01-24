@@ -35,7 +35,7 @@ workflow: https://github.com/Slidem/inplace-envsubst-action/blob/master/.github/
 
 ```
       - name: Test action
-        uses: Slidem/inplace-envsubst-action@v1.0.0
+        uses: Slidem/inplace-envsubst-action@v1.2.2
         env:
           COOL: "cool value"
         with:
